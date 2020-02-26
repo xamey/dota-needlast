@@ -1,25 +1,21 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+
+from app.api.db.mongodb_utils import connect_to_mongo, close_mongo_connection
 from app.api.routes.api import router as api_router
 from app.core.config import API_PREFIX
 
+app = FastAPI()
 
-def get_application() -> FastAPI:
-    application = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    application.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+app.add_event_handler("startup", connect_to_mongo)
+app.add_event_handler("shutdown", close_mongo_connection)
 
-
-
-    application.include_router(api_router, prefix=API_PREFIX)
-
-    return application
-
-
-app = get_application()
+app.include_router(api_router, prefix=API_PREFIX)
