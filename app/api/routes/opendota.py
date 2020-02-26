@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends
 
-from app.services.opendota import OpenDota
+from app.api.dependencies.opendota import opendota_profile_from_steam32id
+from app.models.domain.open_dota_profile.OpenDotaProfile import OpenDotaProfile
+from app.models.schemas.OpenDotaProfileInResponse import OpenDotaProfileInResponse
 
 router = APIRouter()
-api_key = "B58749D3D907C044D06A7EAB8CCDAE05"
 
 
-@router.get('/profile/{steam32id}', name='opendota:profile')
-async def get_profile(steam32id: int, open_dota: OpenDota = Depends(OpenDota)):
-    return open_dota.get_player_infos(steam32id, api_key)
+@router.get('/profile/{steam32id}', name='opendota:profile', response_model=OpenDotaProfileInResponse)
+async def profile_from_steam32id(
+        open_dota_profile: OpenDotaProfile = Depends(opendota_profile_from_steam32id)
+) -> OpenDotaProfileInResponse:
+    return open_dota_profile
