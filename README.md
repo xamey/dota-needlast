@@ -1,4 +1,4 @@
-# Steam-OpenID-FastAPI
+# DotA-needlast
 Minimal Python 3 project designed to provide fast and efficient way to use the Steam
 OpenID sign-in functionnality, using FastAPI framework.
 
